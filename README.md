@@ -1,35 +1,51 @@
 # 🎬 Netflix Content Explorer
 
-## About the Project
-This project is an interactive, menu-driven Python application built to analyze the Netflix movies and TV shows catalog. Using Pandas and NumPy, it processes a dataset of over 8,800 titles to perform data cleaning, generate formatted statistical reports, and extract key business insights regarding global production hubs, format dominance, and library distribution.
+![Python](https://img.shields.io/badge/Python-3.x-blue?style=flat&logo=python)
+![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-150458?style=flat&logo=pandas)
+![NumPy](https://img.shields.io/badge/NumPy-Statistics-013243?style=flat&logo=numpy)
+![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626?style=flat&logo=jupyter)
 
-## Features
-The program features a terminal-based interactive menu with the following capabilities:
+## 📌 Project Overview
+The **Netflix Content Explorer** is an interactive, menu-driven Python application designed to analyze the global Netflix movies and TV shows catalog. Built for the command line, it processes a comprehensive dataset to perform robust data cleaning, generate custom formatted ASCII tables, and extract actionable business insights regarding content trends, geographic production hubs, and library distribution.
+
+## 🗄️ Dataset Information
+* **Name:** Netflix Titles Dataset
+* **Source:** Kaggle
+* **File:** `netflix_titles.csv`
+* **Size:** ~8,800 rows, 12 columns
+* **Attributes:** `show_id`, `type`, `title`, `director`, `cast`, `country`, `date_added`, `release_year`, `rating`, `duration`, `listed_in` (genres), `description`
+
+## 🛠️ Technical Implementation Details
+
+### Data Cleaning & Feature Engineering Pipeline
+Before the user can query the dataset, the `load_and_clean_data()` function automatically sanitizes the data using Pandas:
+* **Null Value Imputation:** Fills missing `country`, `director`, `cast`, and `rating` values with context-appropriate defaults (e.g., "Unknown", "Not Listed").
+* **Datetime Parsing:** Strips leading/trailing whitespace from `date_added`, dynamically converts it to a standard Pandas datetime format, and extracts a new `year_added` integer column for temporal analysis.
+* **Regex Data Extraction:** Uses regular expressions (`r'(\d+)'`) to parse the `duration` text column, separating movie runtimes (minutes) from TV show formats (seasons) into a computable `duration_num` float column.
+* **Data Flattening:** Utilizes Pandas `.str.split()` and `.explode()` to accurately count attributes where a single title has multiple genres, directors, or producing countries.
+
+### Error Handling & UI
+* **Graceful Exceptions:** Utilizes `try-except` blocks to catch `FileNotFoundError` upon initialization and `ValueError` when users input non-numeric types during year-based search prompts.
+* **Dynamic Terminal Clearing:** Implements an OS-agnostic screen clearing function (`os.system('cls' or 'clear')`) to ensure the console remains clean and readable after every query.
+* **Custom Table Generator:** Features a reusable `print_formatted_table()` helper function utilizing Python f-strings to align console outputs into clean, readable ASCII tables.
+
+## ⚙️ Interactive Analytics Menu
+The program provides a 14-option interactive terminal UI grouped into core requirements and advanced analytics:
+
+**Core Content Analytics**
 1. Count of Movies vs. TV Shows
-2. Number of titles added each year (Top 10)
-3. Top 10 producing countries
-4. Top 5 most common genres
+2. Number of titles added each year (Top 10 recent years)
+3. Top 10 producing countries (Handling multi-country collaborations)
+4. Top 5 most common genres (Handling multi-genre titles)
 5. Rating distribution across the platform
 6. Oldest and newest release years
-7. Keyword search functionality for titles
+7. Keyword search functionality for specific titles (Case-insensitive)
 8. Filter content added in a specific user-defined year
-9. Count of total unique producing countries
-10. Summary statistics on release years (Mean, Median, Standard Deviation)
+9. Count of total unique producing countries (Excluding unknowns)
+10. Summary statistics on release years (Mean, Median, Standard Deviation, Q1, Q3 using NumPy)
 
-## Tech Stack
-* **Python 3.x**
-* **Pandas:** Data manipulation, cleaning, and aggregation.
-* **NumPy:** Advanced summary statistics.
-* **Jupyter Notebook:** Interactive development and execution environment.
-
-## Key Insights Discovered
-1. **Format Dominance:** The platform heavily prioritizes feature-length formats over episodic series, maintaining a library where Movies outnumber TV Shows by a significant two-to-one margin.
-2. **Global Production Hubs:** Geographic content production is highly centralized; although over 120 unique countries contribute to the database, the United States and India alone account for the vast majority of all available titles.
-3. **Library Age Skew:** Summary statistics on release dates demonstrate a strong bias toward highly contemporary media. Half of the entire catalog was released in 2017 or later, despite the platform hosting legacy titles dating as far back as 1925.
-
-## How to Run
-1. Clone this repository or download the files to your local machine.
-2. Ensure the `netflix_titles.csv` file is in the same directory as the notebook.
-3. Open `netflix_analysis.ipynb` in Jupyter Notebook, JupyterLab, or VS Code.
-4. Run all cells to launch the interactive terminal menu. 
-5. Enter a number between 1 and 11 to explore the data.
+**Advanced Exploration Tools**
+11. Top 5 Directors with the most content (Excluding missing data)
+12. Top 5 Longest Movies (Utilizing the engineered minute-duration column)
+13. Advanced Multi-Filter Search (Genre text-match + exact Year Added)
+14. Clean terminal exit
